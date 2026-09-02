@@ -29,7 +29,7 @@ class LoginView(APIView):
         email=request.data.get('email')
         password=request.data.get('password')
         if not email or not password:
-            return Response({'error': 'Email and password are required.'}, status=400)  
+            return Response({'error': 'Email and password are required.'}, status=400)      
 
         try:
             user=User.objects.get(email=email)
