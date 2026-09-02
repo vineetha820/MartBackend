@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import User
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password,check_password
 # Create your views here.
 
 
@@ -20,9 +20,9 @@ class RegistrationView(APIView):
         if existing_user:
             return Response({'error': 'Email already exists.'}, status=400)
         user=User.objects.create(email=email,password=make_password(password))
-        refresh = RefreshToken.for_user(user)
+        return Response({'message': 'User registered successfully.'}, status=201)
        
-        return Response({'message': 'User created successfully.', 'refresh': str(refresh), 'access': str(refresh.access_token)}, status=201)
+       
 
 class LoginView(APIView):
     def post(self,request):
@@ -33,10 +33,14 @@ class LoginView(APIView):
 
         try:
             user=User.objects.get(email=email)
+            
         except User.DoesNotExist:
             return Response({'error': 'Invalid email or password.'}, status=400)
 
-        if not user.check_password(password):
+        if not check_password(password,user.password    ):
             return Response({'error': 'Invalid email or password.'}, status=400)
+        refresh = RefreshToken.for_user(user)
+        return Response({'message': 'Login successful.', 'refresh': str(refresh), 'access': str(refresh.access_token)}, status=200)
+                    
 
-        return Response({'message': 'Login successful.'}, status=200)
+        
