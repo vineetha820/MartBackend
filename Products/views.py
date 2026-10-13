@@ -1,8 +1,13 @@
+import django_filters
+
+from Products.productFilter import ProductFilter
+from rest_framework import filters
 from .models import Product
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers.ProductSerializer import ProductSerializer
 from rest_framework import viewsets
+from rest_framework import pagination
 
 # class ProductListView(APIView):
 #     def get(self,request):
@@ -47,3 +52,11 @@ from rest_framework import viewsets
 class productViewSet(viewsets.ModelViewSet):
     queryset=Product.objects.all()
     serializer_class=ProductSerializer
+    filterset_class = ProductFilter 
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'description']
+    pagination_class = pagination.PageNumberPagination 
+    pagination_class.page_size = 2  # Set the number of products per page 
+
+
+ # Use the custom filter class
