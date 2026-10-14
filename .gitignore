@@ -1,0 +1,5 @@
+.venv/
+__pycache__/
+*.py[cod]
+db.before_custom_auth.*.sqlite3
+db.before_marketplace.*.sqlite3

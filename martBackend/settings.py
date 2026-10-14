@@ -130,10 +130,16 @@ MAILERS = {
     },
 }
 
-rest_framework = {
+AUTH_USER_MODEL = 'users.User'
+# The sole product administrator is the existing custom user (vineetha@gmail.com).
+PRODUCT_ADMIN_USER_ID = 1
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
        
     ),  
 }

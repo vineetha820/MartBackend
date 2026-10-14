@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers.ProductSerializer import ProductSerializer
 from rest_framework import viewsets
+from .permissions import ProductAdminPermission
 
 # class ProductListView(APIView):
 #     def get(self,request):
@@ -45,5 +46,10 @@ from rest_framework import viewsets
     #     product.delete()
     #     return Response({'message':'Product deleted successfully.'})
 class productViewSet(viewsets.ModelViewSet):
-    queryset=Product.objects.all()
+    queryset=Product.objects.select_related('seller', 'created_by').all()
     serializer_class=ProductSerializer
+    permission_classes = [ProductAdminPermission]
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(created_by=user)
