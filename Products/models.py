@@ -15,6 +15,7 @@ class Product(models.Model):
         related_name='created_products',
         editable=False,
     )
+    in_stock = models.BooleanField(default=True)
     created_at=models.DateTimeField(auto_now_add=True)
     seller = models.ForeignKey(
         'users.Seller', on_delete=models.SET_NULL, null=True, blank=True,

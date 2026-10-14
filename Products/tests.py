@@ -69,3 +69,22 @@ class ProductAdminTests(TestCase):
         self.admin.delete()
         product.refresh_from_db()
         self.assertIsNone(product.created_by)
+
+    def test_stock_search_filters_pagination_and_both_routes(self):
+        Product.objects.create(name='Red apple', price='10.00', description='Fruit', in_stock=False)
+        Product.objects.create(name='Green apple', price='20.00', description='Fruit')
+        Product.objects.create(name='Pear', price='30.00', description='Fruit')
+        for url in ('/products/', '/products/products/'):
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data['count'], 3)
+            self.assertEqual(len(response.data['results']), 2)
+            response = self.client.get(url, {'search': 'apple', 'price__lt': '15'})
+            self.assertEqual(response.data['count'], 1)
+            self.assertFalse(response.data['results'][0]['in_stock'])
+            self.assertEqual(self.client.post(url, self.payload).status_code, 401)
+        self.client.force_authenticate(user=self.admin)
+        response = self.client.post('/products/', {**self.payload, 'in_stock': False})
+        self.assertEqual(response.status_code, 201)
+        self.assertFalse(response.data['in_stock'])
+        self.assertEqual(response.data['created_by'], self.admin.pk)

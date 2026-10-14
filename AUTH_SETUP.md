@@ -41,3 +41,16 @@ Customers place orders with `POST /orders/` and see their own orders with
 
 Prices and totals come from stored products. Payment collection is not
 implemented by these endpoints.
+
+## Product catalogue and local data
+
+`/products/` and `/products/<id>/` are also available; the older
+`/products/products/` routes remain supported. Product lists are paginated
+(two per page). Use `search`, `name__icontains`, `price__lt`, `price__gt`,
+or `price__range` to filter the catalogue. Products expose `in_stock`.
+
+After pulling, install `requirements.txt` and run `manage.py migrate`.
+SQLite databases and Python bytecode are local files and are not tracked.
+The database snapshots from the merge are retained locally as
+`db.merge-local.sqlite3` and `db.merge-remote.sqlite3`; their records were
+not combined. The active database retains the local authentication setup.
